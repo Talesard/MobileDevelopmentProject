@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form action="{{url_for('register')}}" method="POST"  class="block-login" >
+<h3 style="text-align: center">Sign up</h3>
+    {% for cat, msg in get_flashed_messages(True) %}
+    <div class="flash-{{ cat }}">{{msg}}</div>
+    {% endfor %}
+    <div class="form-group">
+        <label for="username-input">Username</label>
+        <input type="text" name="username" class="form-control" id="username-input" placeholder="Username">
+    </div>
+    <div class="form-group">
+        <label for="email-input">Email</label>
+        <input type="email" name="email" class="form-control" id="email-input" placeholder="Email">
+    </div>
+    <div class="form-group">
+        <label for="password-input">Password</label>
+        <input type="password" name="password" class="form-control" id="password-input" placeholder="Password">
+    </div>
+    <div class="form-group">
+        <label for="password-input-2">Confirm Password</label>
+        <input type="password" name="password_2" class="form-control" id="password-input-2" placeholder="Confirm Password">
+    </div>
+    <div style="text-align: center; margin-top: 10px">
+        <button type="submit" class="btn btn-primary" style="width: 100%">Submit</button>
+        <a href="{{ url_for('login') }}">Sign in</a>
+    </div>
+</form>
+
+{% endblock %}

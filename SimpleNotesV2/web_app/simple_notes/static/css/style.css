@@ -1,0 +1,60 @@
+p {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.page-header {
+    text-align: center;
+    border-bottom: 1px solid black;
+}
+
+.block-login {
+    width: 250px;
+    height: 250px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -125px 0 0 -125px;
+}
+
+.flash-ok {
+    color: green;
+    text-align: center;
+}
+
+.flash-err {
+    color: red;
+    text-align: center;
+}
+
+.left-offset {
+    margin-left: 5px;
+}
+
+.main-sign {
+    font-family: Aladin, serif;
+    text-decoration: none;
+}
+
+.l-r-offsets {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.right-btn {
+    float: right;
+}
+
+
+.field {
+    width: 300px;
+    height: 300px;
+}
+
+.cell {
+    width: 96px;
+    height: 96px;
+    border: 2px solid black;
+    float: left;
+    text-align: center;
+}
