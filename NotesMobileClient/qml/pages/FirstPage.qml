@@ -2,7 +2,6 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import Nemo.Configuration 1.0
 
-
 Page {
 
     ConfigurationValue {
@@ -16,21 +15,25 @@ Page {
         defaultValue: ""
     }
 
+    ConfigurationValue {
+        id: current_note_id
+        key: "/apps/NotesMobileClient/current_note_id"
+        defaultValue: -1
+    }
+
+
     function get_all_notes(_userid) {
         const xmlHttp = new XMLHttpRequest()
         xmlHttp.onreadystatechange = function () {
             if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
                 var json_resp = JSON.parse(xmlHttp.responseText)
-                var tmp = ""
                 for (var i = 0; i < json_resp['notes'].length; i++) {
-                    var title = json_resp['notes'][i]['title']
-                    var text = json_resp['notes'][i]['text']
-                    var date = json_resp['notes'][i]['date']
-                    var id = json_resp['notes'][i]['id']
-                    tmp += "Date: " + date + '\n' + "Title: " + title  + '\n' + "Text: " + text + '\n' + "Id: " + id + '\n\n'
+                    var _title = json_resp['notes'][i]['title']
+                    var _text = json_resp['notes'][i]['text']
+                    var _date = json_resp['notes'][i]['date']
+                    var _id = json_resp['notes'][i]['id']
+                    notes_model.append({date: _date, title: _title, text: _text, id: _id})
                 }
-                clear_all_fields()
-                notes.text = tmp
             }
         }
         xmlHttp.open("POST", host_cfg_value.value+"/api/get_all_notes", true)
@@ -39,158 +42,73 @@ Page {
         xmlHttp.send(response_json)
     }
 
-    function add_new_note(_userid, _title, _text) {
-        const xmlHttp = new XMLHttpRequest()
-        xmlHttp.onreadystatechange = function () {
-            if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-                var json_resp = JSON.parse(xmlHttp.responseText)
-                console.log(json_resp['success'])
-                clear_all_fields()
-                if (json_resp['success'] === true) {get_all_notes(userid_cfg_value.value)}
-            }
-        }
-        xmlHttp.open("POST", host_cfg_value.value+"/api/add_note", true)
-        xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-        var response_json = JSON.stringify({
-                                           "userid": _userid,
-                                           "title": _title,
-                                           "text": _text
-                                       });
-        xmlHttp.send(response_json)
-    }
-
-    function delete_note(_userid, _note_id) {
-        const xmlHttp = new XMLHttpRequest()
-        xmlHttp.onreadystatechange = function () {
-            if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-                var json_resp = JSON.parse(xmlHttp.responseText)
-                console.log(json_resp['success'])
-                clear_all_fields()
-                if (json_resp['success'] === true) {get_all_notes(userid_cfg_value.value)}
-            }
-        }
-        xmlHttp.open("POST", host_cfg_value.value+"/api/del_note", true)
-        xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-        var response_json = JSON.stringify({
-                                           "userid": _userid,
-                                           "note_id": _note_id
-                                       });
-        xmlHttp.send(response_json)
-    }
-
-    function edit_note(_userid, _note_id, _title, _text) {
-        const xmlHttp = new XMLHttpRequest()
-        xmlHttp.onreadystatechange = function () {
-            if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-                var json_resp = JSON.parse(xmlHttp.responseText)
-                console.log(json_resp['success'])
-                clear_all_fields()
-                if (json_resp['success'] === true) {get_all_notes(userid_cfg_value.value)}
-            }
-        }
-        xmlHttp.open("POST", host_cfg_value.value+"/api/edit_note", true)
-        xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-        var response_json = JSON.stringify({
-                                           "userid": _userid,
-                                           "title": _title,
-                                           "text": _text,
-                                           "note_id": _note_id
-                                       });
-        xmlHttp.send(response_json)
-    }
-
-    function clear_all_fields() {
-        title_input.text = ""
-        text_input.text = ""
-        id_del_edit_input.text = ""
-    }
-
     id: page
+
     allowedOrientations: Orientation.All
-    SilicaFlickable {
+
+    ListModel {
+        id: notes_model
+    }
+
+    SilicaListView {
+        id: listView
+        model: notes_model
         anchors.fill: parent
-        PullDownMenu {
-            MenuItem {
-                text: qsTr("Show Settings Page")
-                onClicked: pageStack.animatorPush(Qt.resolvedUrl("login.qml"))
+        spacing: Theme.paddingLarge
+
+        header: PageHeader {
+            title: qsTr("")
+        }
+
+        Button {
+            id: new_note_bt
+            x: Theme.paddingLarge
+            y: Theme.paddingLarge
+            text: "Add New"
+            onClicked: {
+                pageStack.animatorPush(Qt.resolvedUrl("NewNote.qml"))
             }
         }
-        contentHeight: column.height
 
+        Button {
+            id: settings_bt
+            y: Theme.paddingLarge
+            x: new_note_bt.x + new_note_bt.width + Theme.paddingLarge
+            text: "Settings"
+            onClicked: {
+                pageStack.animatorPush(Qt.resolvedUrl("Settings.qml"))
+            }
+        }
 
+        delegate: BackgroundItem {
+            id: delegate
 
-        Column {
-            id: column
-            width: page.width
-            spacing: Theme.paddingLarge
-
-            TextField {
-                id: title_input
-                placeholderText: "note title"
+            Label {
+                x: Theme.horizontalPageMargin
+                text: title + "\n" + date
+                anchors.verticalCenter: parent.verticalCenter
             }
 
-            TextArea {
-                id: text_input
-                placeholderText: "note text"
+            onClicked: {
+                console.log("Clicked note id: " + id)
+                current_note_id.value = id
+                console.log("Current note id cfg: " + current_note_id.value)
+                pageStack.animatorPush(Qt.resolvedUrl("NoteDetails.qml"))
             }
+        }
+        VerticalScrollDecorator {}
+    }
 
-            TextField {
-                id: id_del_edit_input
-                placeholderText: "del/edit id"
-            }
-
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: Theme.paddingLarge
-                Button {
-                    id: add_bt
-                    text: "Add Note"
-                    //anchors.horizontalCenter: parent.horizontalCenter
-                    onClicked: {
-                        add_new_note(userid_cfg_value.value, title_input.text, text_input.text)
-                    }
-                }
-
-                Button {
-                    id: get_all_bt
-                    text: "Refresh"
-                    //anchors.horizontalCenter: parent.horizontalCenter
-                    onClicked: {
-                        get_all_notes(userid_cfg_value.value)
-                    }
-                }
-            }
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: Theme.paddingLarge
-                Button {
-                    id: delete_bt
-                    text: "Delete"
-                    //anchors.horizontalCenter: parent.horizontalCenter
-                    onClicked: {
-                        delete_note(userid_cfg_value.value, id_del_edit_input.text)
-                    }
-                }
-
-                Button {
-                    id: edit_bt
-                    text: "Edit"
-                    //anchors.horizontalCenter: parent.horizontalCenter
-                    onClicked: {
-                        edit_note(userid_cfg_value.value, id_del_edit_input.text, title_input.text, text_input.text)
-                    }
-                }
-            }
-
-
-            TextArea {
-                id: notes
-                text: ""
-                wrapMode: Text.WrapAnywhere
-                readOnly: true
-            }
-
+    Timer {
+        id: timer
+        interval: 60000
+        repeat: true
+        running:true
+        onTriggered:  {
+            notes_model.clear();
+            get_all_notes(userid_cfg_value.value)
         }
     }
+
     Component.onCompleted: {get_all_notes(userid_cfg_value.value)}
 }

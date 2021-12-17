@@ -30,7 +30,6 @@ Page {
             if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
                 var json_resp = JSON.parse(xmlHttp.responseText)
                 var tmp = "UserId\n"
-                // userid_label.text = "UserId: " + json_resp['userid']
                 userid_cfg_value.value = json_resp['userid']
                 username_cfg_value.value = json_resp['username']
                 status_label.text = "Login status: " + json_resp['success'] + ", as " + json_resp['username']
@@ -46,26 +45,15 @@ Page {
 
     id: page
 
-    // The effective value will be restricted by ApplicationWindow.allowedOrientations
     allowedOrientations: Orientation.All
 
-    // To enable PullDownMenu, place our content in a SilicaFlickable
+
     SilicaFlickable {
         anchors.fill: parent
 
-        // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
-        PullDownMenu {
-            MenuItem {
-                text: qsTr("Show Notes Page")
-                onClicked: pageStack.animatorPush(Qt.resolvedUrl("FirstPage.qml"))
-            }
-        }
-
-        // Tell SilicaFlickable the height of its content.
         contentHeight: column.height
 
-        // Place our content in a Column.  The PageHeader is always placed at the top
-        // of the page, followed by our content.
+
         Column {
             id: column
             width: page.width
@@ -123,6 +111,7 @@ Page {
             Label {
                 text: "HOST SETTINGS"
                 font.pixelSize: 40
+                y: Theme.paddingLarge
             }
             TextField {
                 id: host_input
@@ -134,6 +123,15 @@ Page {
                 text: "ChangeHost"
                 onClicked: {host_cfg_value.value = host_input.text; host_input.placeholderText = "host: " + host_cfg_value.value}
                 anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            Button {
+                id: back_to_notes_bt
+                text: "Back"
+                anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: {
+                    pageStack.animatorPush(Qt.resolvedUrl("FirstPage.qml"))
+                }
             }
 
 

@@ -19,7 +19,6 @@ SOURCES += src/NotesMobileClient.cpp
 DISTFILES += qml/NotesMobileClient.qml \
     qml/cover/CoverPage.qml \
     qml/pages/FirstPage.qml \
-    qml/pages/SecondPage.qml \
     rpm/NotesMobileClient.changes.in \
     rpm/NotesMobileClient.changes.run.in \
     rpm/NotesMobileClient.spec \

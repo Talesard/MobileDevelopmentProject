@@ -241,3 +241,21 @@ def api_edit_note():
     }
 
     return jsonify(resp)
+
+
+@app.route('/api/get_one_note_by_id', methods=['POST'])
+def api_get_one_note_by_id():
+    data = request.get_json()
+    _userid = data['userid']
+    _note_id = data['note_id']
+
+    _note = Notes.query.filter_by(user_id=_userid, id=_note_id).first()
+
+    resp = {
+        "title": _note.title,
+        "text": _note.detail_text,
+        "date": _note.date_creat,
+        "id": _note.id,
+    }
+    return jsonify(resp)
+

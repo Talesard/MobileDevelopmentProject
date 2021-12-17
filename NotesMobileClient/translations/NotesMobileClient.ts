@@ -11,26 +11,15 @@
 <context>
     <name>FirstPage</name>
     <message>
-        <source>Show Settings Page</source>
-        <translation type="unfinished"></translation>
+        <source></source>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>SecondPage</name>
     <message>
-        <source>Nested Page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>login</name>
-    <message>
-        <source>Show Notes Page</source>
-        <translation type="unfinished"></translation>
+        <source></source>
+        <translation></translation>
     </message>
 </context>
 </TS>
